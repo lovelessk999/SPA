@@ -30,11 +30,11 @@
         task: {
           done: doneValue
         }
-      }).success(function(data) {
+      }).done(function(data) {
         var liHtml = taskHtml(data);
-      var $li = $("#listItem-" + data.id);
-      $li.replaceWith(liHtml);
-      $('.toggle').change(toggleTask);
+        var $li = $("#listItem-" + data.id);
+        $li.replaceWith(liHtml);
+        $('.toggle').change(toggleTask);
       } );
     }
 
@@ -55,18 +55,34 @@
     $('#new-form').submit(function(event) {
       event.preventDefault();
       var textbox = $('.new-todo');
+     
       var payload = {
         task: {
           title: textbox.val()
         }
       };
-      $.post("/tasks", payload).done(function(data) {
+      console.log(payload);
+  
+   
+
+$.ajax({ url: '/tasks',
+  type: 'POST',
+  beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+  data: payload,
+  success: function(data) {
+  
         var htmlString = taskHtml(data);
         var ulTodos = $('.todo-list');
         ulTodos.append(htmlString);
         $('.toggle').click(toggleTask);
         $('.new-todo').val('');
-      });
+  }
+});
+
+
+
+
+
     });
 
   });
